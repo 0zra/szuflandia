@@ -23,7 +23,7 @@ type SubCategory = {
   }[];
 };
 
-export function SubCategorySection({ sub }: { sub: SubCategory }) {
+export function SubCategorySection({ sub, search = "" }: { sub: SubCategory; search?: string }) {
   const [expanded, setExpanded] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState(sub.name);
@@ -111,10 +111,15 @@ export function SubCategorySection({ sub }: { sub: SubCategory }) {
 
       {expanded && (
         <div className="space-y-0.5 py-1">
-          {sub.items.map((item) => (
+          {(search
+            ? sub.items.filter((i) =>
+                i.name.toLowerCase().includes(search.toLowerCase())
+              )
+            : sub.items
+          ).map((item) => (
             <ItemRow key={item.id} item={item} />
           ))}
-          <AddItemForm subCategoryId={sub.id} />
+          {!search && <AddItemForm subCategoryId={sub.id} />}
         </div>
       )}
     </div>

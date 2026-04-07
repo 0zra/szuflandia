@@ -5,7 +5,7 @@ import { useCategories, useAddCategory } from "@/app/hooks/use-pantry";
 import { logout } from "@/app/actions/auth";
 import { CategoryCard } from "@/app/components/category-card";
 import { AddInline } from "@/app/components/add-inline";
-import { LogOut, Plus } from "@/app/components/icons";
+import { LogOut, Plus, X } from "@/app/components/icons";
 import { AddCategoryPanel } from "@/app/components/add-category-panel";
 import { AddSubCategoryPanel } from "@/app/components/add-subcategory-panel";
 import { AddItemPanel } from "@/app/components/add-item-panel";
@@ -17,6 +17,7 @@ export function Dashboard() {
   const addCategory = useAddCategory();
   const [activePanel, setActivePanel] = useState<PanelKind>(null);
   const [fabOpen, setFabOpen] = useState(false);
+  const [search, setSearch] = useState("");
 
   function openPanel(kind: PanelKind) {
     setFabOpen(false);
@@ -29,7 +30,7 @@ export function Dashboard() {
       <header className="sticky top-0 z-10 border-b border-zinc-200 bg-white/80 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/80">
         <div className="mx-auto flex max-w-2xl items-center justify-between px-4 py-3">
           <h1 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-            Pantry
+            Szuflandia
           </h1>
           <button
             onClick={() => logout()}
@@ -39,6 +40,41 @@ export function Dashboard() {
             Sign out
           </button>
         </div>
+        {categories && categories.length > 0 && (
+          <div className="mx-auto max-w-2xl px-4 pb-3">
+            <div className="relative">
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search items..."
+                className="w-full rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 pl-9 text-sm outline-none transition-colors placeholder:text-zinc-400 focus:border-zinc-400 focus:bg-white dark:border-zinc-700 dark:bg-zinc-800/50 dark:placeholder:text-zinc-500 dark:focus:border-zinc-600 dark:focus:bg-zinc-800"
+              />
+              <svg
+                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400"
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+              {search && (
+                <button
+                  onClick={() => setSearch("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-0.5 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+                >
+                  <X width={14} height={14} />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Content */}
@@ -65,9 +101,21 @@ export function Dashboard() {
               </div>
             )}
 
-            {categories.map((cat) => (
-              <CategoryCard key={cat.id} category={cat} />
-            ))}
+            {categories
+              .filter((cat) => {
+                if (!search) return true;
+                const q = search.toLowerCase();
+                const hasDirectItem = cat.items.some((i) =>
+                  i.name.toLowerCase().includes(q)
+                );
+                const hasSubItem = cat.subCategories.some((s) =>
+                  s.items.some((i) => i.name.toLowerCase().includes(q))
+                );
+                return hasDirectItem || hasSubItem;
+              })
+              .map((cat) => (
+                <CategoryCard key={cat.id} category={cat} search={search} />
+              ))}
 
             <div className="overflow-hidden rounded-xl border border-dashed border-zinc-300 bg-white dark:border-zinc-700 dark:bg-zinc-900">
               <AddInline

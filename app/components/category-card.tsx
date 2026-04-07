@@ -13,13 +13,23 @@ import { AddItemForm } from "@/app/components/add-item-form";
 import { AddInline } from "@/app/components/add-inline";
 import { SubCategorySection } from "@/app/components/sub-category-section";
 
-export function CategoryCard({ category }: { category: CategoryWithChildren }) {
+export function CategoryCard({ category, search = "" }: { category: CategoryWithChildren; search?: string }) {
   const [expanded, setExpanded] = useState(true);
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState(category.name);
   const editCat = useEditCategory();
   const deleteCat = useDeleteCategory();
   const addSub = useAddSubCategory();
+
+  const q = search.toLowerCase();
+  const filteredItems = q
+    ? category.items.filter((i) => i.name.toLowerCase().includes(q))
+    : category.items;
+  const filteredSubs = q
+    ? category.subCategories.filter((s) =>
+        s.items.some((i) => i.name.toLowerCase().includes(q))
+      )
+    : category.subCategories;
 
   const totalItems =
     category.items.length +
@@ -111,33 +121,35 @@ export function CategoryCard({ category }: { category: CategoryWithChildren }) {
       {expanded && (
         <div className="border-t border-zinc-100 px-1 py-2 dark:border-zinc-800">
           {/* Direct items */}
-          {category.items.length > 0 && (
+          {filteredItems.length > 0 && (
             <div className="space-y-0.5">
-              {category.items.map((item) => (
+              {filteredItems.map((item) => (
                 <ItemRow key={item.id} item={item} />
               ))}
             </div>
           )}
 
-          <AddItemForm categoryId={category.id} />
+          {!q && <AddItemForm categoryId={category.id} />}
 
           {/* Subcategories */}
-          {category.subCategories.length > 0 && (
+          {filteredSubs.length > 0 && (
             <div className="mt-2 space-y-1">
-              {category.subCategories.map((sub) => (
-                <SubCategorySection key={sub.id} sub={sub} />
+              {filteredSubs.map((sub) => (
+                <SubCategorySection key={sub.id} sub={sub} search={search} />
               ))}
             </div>
           )}
 
-          <div className="mt-1">
-            <AddInline
-              placeholder="Add subcategory"
-              onAdd={(name) =>
-                addSub.mutate({ categoryId: category.id, name })
-              }
-            />
-          </div>
+          {!q && (
+            <div className="mt-1">
+              <AddInline
+                placeholder="Add subcategory"
+                onAdd={(name) =>
+                  addSub.mutate({ categoryId: category.id, name })
+                }
+              />
+            </div>
+          )}
         </div>
       )}
     </div>
