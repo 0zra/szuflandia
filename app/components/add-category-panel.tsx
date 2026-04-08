@@ -29,7 +29,7 @@ export function AddCategoryPanel({
     e.preventDefault();
     const trimmed = name.trim();
     if (!trimmed) {
-      setError("Name is required.");
+      setError("Nazwa jest wymagana.");
       return;
     }
     addCategory.mutate(trimmed, {
@@ -37,19 +37,19 @@ export function AddCategoryPanel({
         reset();
         onClose();
       },
-      onError: () => setError("Failed to create category. Name may already exist."),
+      onError: () => setError("Nie udało się utworzyć kategorii. Nazwa może już istnieć."),
     });
   }
 
   return (
-    <SlidePanel open={open} onClose={handleClose} title="New Category">
+    <SlidePanel open={open} onClose={handleClose} title="Nowa kategoria">
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-1.5">
           <label
             htmlFor="cat-name"
             className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
           >
-            Category name
+            Nazwa kategorii
           </label>
           <input
             id="cat-name"
@@ -58,7 +58,7 @@ export function AddCategoryPanel({
               setName(e.target.value);
               setError("");
             }}
-            placeholder='e.g. "Fridge", "Freezer", "Pantry"'
+            placeholder='np. "Lodówka", "Zamrażarka", "Spiżarnia"'
             className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition-colors focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
           />
           {error && <p className="text-xs text-red-500">{error}</p>}
@@ -70,14 +70,14 @@ export function AddCategoryPanel({
             disabled={addCategory.isPending}
             className="flex-1 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
-            {addCategory.isPending ? "Creating..." : "Create Category"}
+            {addCategory.isPending ? "Tworzenie..." : "Utwórz kategorię"}
           </button>
           <button
             type="button"
             onClick={handleClose}
             className="rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
-            Cancel
+            Anuluj
           </button>
         </div>
       </form>

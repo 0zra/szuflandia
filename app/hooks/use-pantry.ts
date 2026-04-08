@@ -38,7 +38,7 @@ export function useAddCategory() {
     mutationFn: (name: string) => addCategory(name),
     onSuccess: (created) => {
       qc.setQueryData<CategoryWithChildren[]>(CATEGORIES_KEY, (old) =>
-        old ? [...old, created].sort((a, b) => a.name.localeCompare(b.name)) : [created]
+        old ? [...old, created] : [created]
       );
     },
   });
@@ -52,9 +52,7 @@ export function useEditCategory() {
     onSuccess: (updated) => {
       qc.setQueryData<CategoryWithChildren[]>(CATEGORIES_KEY, (old) =>
         old
-          ? old
-              .map((c) => (c.id === updated.id ? updated : c))
-              .sort((a, b) => a.name.localeCompare(b.name))
+          ? old.map((c) => (c.id === updated.id ? updated : c))
           : old
       );
     },

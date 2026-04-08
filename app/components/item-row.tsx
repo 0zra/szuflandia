@@ -20,7 +20,7 @@ export function ItemRow({ item }: { item: Item }) {
   const [editName, setEditName] = useState(item.name);
   const [editUnit, setEditUnit] = useState(item.unit);
 
-  const step = item.unit === "pieces" ? 1 : 0.5;
+  const step = item.unit === "szt." || item.unit === "pieces" ? 1 : 0.5;
 
   function adjustQuantity(delta: number) {
     const next = Math.max(0, Math.round((item.quantity + delta) * 10) / 10);
@@ -48,7 +48,7 @@ export function ItemRow({ item }: { item: Item }) {
           value={editName}
           onChange={(e) => setEditName(e.target.value)}
           className="min-w-0 flex-1 rounded border border-zinc-300 bg-white px-2 py-1 text-sm outline-none focus:border-zinc-500 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:border-zinc-400"
-          placeholder="Name"
+          placeholder="Nazwa"
           autoFocus
           onKeyDown={(e) => {
             if (e.key === "Enter") saveEdit();
@@ -59,7 +59,7 @@ export function ItemRow({ item }: { item: Item }) {
           value={editUnit}
           onChange={(e) => setEditUnit(e.target.value)}
           className="w-20 rounded border border-zinc-300 bg-white px-2 py-1 text-sm outline-none focus:border-zinc-500 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:border-zinc-400"
-          placeholder="Unit"
+          placeholder="Jedn."
           onKeyDown={(e) => {
             if (e.key === "Enter") saveEdit();
             if (e.key === "Escape") cancelEdit();

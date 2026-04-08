@@ -61,7 +61,7 @@ export function AddInline({
         type="submit"
         className="rounded-md bg-zinc-900 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
       >
-        Add
+        Dodaj
       </button>
     </form>
   );

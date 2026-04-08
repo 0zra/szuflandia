@@ -17,19 +17,19 @@ export async function login(
   const password = formData.get("password") as string;
 
   if (!email || !password) {
-    return { error: "Email and password are required." };
+    return { error: "E-mail i hasło są wymagane." };
   }
 
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
-    return { error: "Invalid email or password." };
+    return { error: "Nieprawidłowy e-mail lub hasło." };
   }
 
   const passwordMatch = await bcrypt.compare(password, user.passwordHash);
 
   if (!passwordMatch) {
-    return { error: "Invalid email or password." };
+    return { error: "Nieprawidłowy e-mail lub hasło." };
   }
 
   await createSession(user.id);

@@ -14,10 +14,10 @@ export default function LoginPage() {
       <div className="w-full max-w-sm space-y-6 rounded-xl border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
         <div className="space-y-1 text-center">
           <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-            Pantry
+            Szuflandia
           </h1>
           <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Sign in to your account
+            Zaloguj się na swoje konto
           </p>
         </div>
 
@@ -33,7 +33,7 @@ export default function LoginPage() {
               htmlFor="email"
               className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
             >
-              Email
+              E-mail
             </label>
             <input
               id="email"
@@ -51,7 +51,7 @@ export default function LoginPage() {
               htmlFor="password"
               className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
             >
-              Password
+              Hasło
             </label>
             <input
               id="password"
@@ -69,7 +69,7 @@ export default function LoginPage() {
             disabled={pending}
             className="w-full rounded-md bg-zinc-900 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
-            {pending ? "Signing in..." : "Sign in"}
+            {pending ? "Logowanie..." : "Zaloguj się"}
           </button>
         </form>
       </div>

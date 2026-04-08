@@ -15,7 +15,7 @@ export function AddItemForm({
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("1");
-  const [unit, setUnit] = useState("pieces");
+  const [unit, setUnit] = useState("szt.");
 
   function submit() {
     const trimmedName = name.trim();
@@ -23,13 +23,13 @@ export function AddItemForm({
     addItem.mutate({
       name: trimmedName,
       quantity: parseFloat(quantity) || 1,
-      unit: unit.trim() || "pieces",
+      unit: unit.trim() || "szt.",
       categoryId: subCategoryId ? undefined : categoryId,
       subCategoryId,
     });
     setName("");
     setQuantity("1");
-    setUnit("pieces");
+    setUnit("szt.");
     setOpen(false);
   }
 
@@ -40,7 +40,7 @@ export function AddItemForm({
         className="flex w-full items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-zinc-400 transition-colors hover:bg-zinc-50 hover:text-zinc-600 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300"
       >
         <Plus width={14} height={14} />
-        Add item
+        Dodaj produkt
       </button>
     );
   }
@@ -51,14 +51,14 @@ export function AddItemForm({
         e.preventDefault();
         submit();
       }}
-      className="flex flex-wrap items-center gap-2 px-3 py-1.5"
+      className="space-y-2 px-3 py-1.5"
     >
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="Item name"
+        placeholder="Nazwa produktu"
         autoFocus
-        className="min-w-0 flex-1 rounded border border-zinc-300 bg-white px-2 py-1 text-sm outline-none focus:border-zinc-500 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:border-zinc-400"
+        className="w-full rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm outline-none focus:border-zinc-500 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:border-zinc-400"
         onKeyDown={(e) => {
           if (e.key === "Escape") {
             setName("");
@@ -66,33 +66,35 @@ export function AddItemForm({
           }
         }}
       />
-      <input
-        value={quantity}
-        onChange={(e) => setQuantity(e.target.value)}
-        type="number"
-        step="0.1"
-        min="0"
-        className="w-16 rounded border border-zinc-300 bg-white px-2 py-1 text-sm outline-none focus:border-zinc-500 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:border-zinc-400"
-      />
-      <input
-        value={unit}
-        onChange={(e) => setUnit(e.target.value)}
-        placeholder="Unit"
-        className="w-20 rounded border border-zinc-300 bg-white px-2 py-1 text-sm outline-none focus:border-zinc-500 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:border-zinc-400"
-      />
-      <button
-        type="submit"
-        className="rounded-md bg-zinc-900 px-3 py-1 text-xs font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
-      >
-        Add
-      </button>
-      <button
-        type="button"
-        onClick={() => setOpen(false)}
-        className="rounded-md px-2 py-1 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
-      >
-        Cancel
-      </button>
+      <div className="flex items-center gap-2">
+        <input
+          value={quantity}
+          onChange={(e) => setQuantity(e.target.value)}
+          type="number"
+          step="0.1"
+          min="0"
+          className="w-16 rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm outline-none focus:border-zinc-500 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:border-zinc-400"
+        />
+        <input
+          value={unit}
+          onChange={(e) => setUnit(e.target.value)}
+          placeholder="Jedn."
+          className="w-20 rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm outline-none focus:border-zinc-500 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:border-zinc-400"
+        />
+        <button
+          type="submit"
+          className="rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-zinc-700 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-300"
+        >
+          Dodaj
+        </button>
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="rounded-md px-2 py-1.5 text-xs text-zinc-400 transition-colors hover:text-zinc-600 dark:hover:text-zinc-300"
+        >
+          Anuluj
+        </button>
+      </div>
     </form>
   );
 }

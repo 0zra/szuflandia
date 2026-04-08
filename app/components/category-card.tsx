@@ -98,7 +98,7 @@ export function CategoryCard({ category, search = "" }: { category: CategoryWith
                 {category.name}
               </span>
               <span className="ml-2 text-xs font-normal text-zinc-400">
-                {totalItems} {totalItems === 1 ? "item" : "items"}
+                {totalItems} {totalItems === 1 ? "produkt" : totalItems >= 2 && totalItems <= 4 ? "produkty" : "produktów"}
               </span>
             </button>
             <button
@@ -143,7 +143,7 @@ export function CategoryCard({ category, search = "" }: { category: CategoryWith
           {!q && (
             <div className="mt-1">
               <AddInline
-                placeholder="Add subcategory"
+                placeholder="Dodaj podkategorię"
                 onAdd={(name) =>
                   addSub.mutate({ categoryId: category.id, name })
                 }

@@ -27,7 +27,7 @@ export function AddItemPanel({
 
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [unit, setUnit] = useState("pieces");
+  const [unit, setUnit] = useState("szt.");
   const [locationKey, setLocationKey] = useState("");
   const [error, setError] = useState("");
 
@@ -56,12 +56,12 @@ export function AddItemPanel({
         ? `cat:${preselectedCategoryId}`
         : "");
 
-  const commonUnits = ["pieces", "kg", "g", "L", "mL", "oz", "lbs", "cups"];
+  const commonUnits = ["szt.", "kg", "g", "L", "mL", "oz", "lbs", "szkl."];
 
   function reset() {
     setName("");
     setQuantity(1);
-    setUnit("pieces");
+    setUnit("szt.");
     setLocationKey("");
     setError("");
   }
@@ -80,11 +80,11 @@ export function AddItemPanel({
     const trimmedName = name.trim();
 
     if (!trimmedName) {
-      setError("Item name is required.");
+      setError("Nazwa produktu jest wymagana.");
       return;
     }
     if (!resolvedKey) {
-      setError("Please select a location.");
+      setError("Wybierz lokalizację.");
       return;
     }
 
@@ -95,7 +95,7 @@ export function AddItemPanel({
       {
         name: trimmedName,
         quantity,
-        unit: unit.trim() || "pieces",
+        unit: unit.trim() || "szt.",
         categoryId: isSub ? undefined : id,
         subCategoryId: isSub ? id : undefined,
       },
@@ -104,13 +104,13 @@ export function AddItemPanel({
           reset();
           onClose();
         },
-        onError: () => setError("Failed to add item."),
+        onError: () => setError("Nie udało się dodać produktu."),
       }
     );
   }
 
   return (
-    <SlidePanel open={open} onClose={handleClose} title="Add Item">
+    <SlidePanel open={open} onClose={handleClose} title="Dodaj produkt">
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* Name */}
         <div className="space-y-1.5">
@@ -118,7 +118,7 @@ export function AddItemPanel({
             htmlFor="item-name"
             className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
           >
-            Item name
+            Nazwa produktu
           </label>
           <input
             id="item-name"
@@ -127,7 +127,7 @@ export function AddItemPanel({
               setName(e.target.value);
               setError("");
             }}
-            placeholder='e.g. "Milk", "Chicken breast"'
+            placeholder='np. "Mleko", "Pierś z kurczaka"'
             className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition-colors focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
           />
         </div>
@@ -135,7 +135,7 @@ export function AddItemPanel({
         {/* Quantity */}
         <div className="space-y-1.5">
           <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            Quantity
+            Ilość
           </label>
           <div className="flex items-center gap-3">
             <button
@@ -170,7 +170,7 @@ export function AddItemPanel({
             htmlFor="item-unit"
             className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
           >
-            Unit
+            Jednostka
           </label>
           <div className="flex flex-wrap gap-1.5">
             {commonUnits.map((u) => (
@@ -192,7 +192,7 @@ export function AddItemPanel({
             id="item-unit"
             value={unit}
             onChange={(e) => setUnit(e.target.value)}
-            placeholder="Or type a custom unit"
+            placeholder="Lub wpisz własną jednostkę"
             className="mt-1.5 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition-colors focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
           />
         </div>
@@ -203,7 +203,7 @@ export function AddItemPanel({
             htmlFor="item-location"
             className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
           >
-            Location
+            Lokalizacja
           </label>
           <select
             id="item-location"
@@ -214,7 +214,7 @@ export function AddItemPanel({
             }}
             className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition-colors focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
           >
-            <option value="">Select location...</option>
+            <option value="">Wybierz lokalizację...</option>
             {locations.map((loc) => {
               const key = loc.subCategoryId
                 ? `sub:${loc.subCategoryId}`
@@ -236,14 +236,14 @@ export function AddItemPanel({
             disabled={addItem.isPending}
             className="flex-1 rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
-            {addItem.isPending ? "Adding..." : "Add Item"}
+            {addItem.isPending ? "Dodawanie..." : "Dodaj produkt"}
           </button>
           <button
             type="button"
             onClick={handleClose}
             className="rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
-            Cancel
+            Anuluj
           </button>
         </div>
       </form>

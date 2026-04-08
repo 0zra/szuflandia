@@ -42,7 +42,6 @@ export async function getCategories(): Promise<CategoryWithChildren[]> {
       },
       items: true,
     },
-    orderBy: { name: "asc" },
   });
 }
 
