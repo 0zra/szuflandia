@@ -14,7 +14,7 @@ import { AddInline } from "@/app/components/add-inline";
 import { SubCategorySection } from "@/app/components/sub-category-section";
 
 export function CategoryCard({ category, search = "" }: { category: CategoryWithChildren; search?: string }) {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState(category.name);
   const editCat = useEditCategory();
@@ -22,14 +22,17 @@ export function CategoryCard({ category, search = "" }: { category: CategoryWith
   const addSub = useAddSubCategory();
 
   const q = search.toLowerCase();
-  const filteredItems = q
+  const catNameMatch = q ? category.name.toLowerCase().includes(q) : false;
+  const filteredItems = q && !catNameMatch
     ? category.items.filter((i) => i.name.toLowerCase().includes(q))
     : category.items;
-  const filteredSubs = q
+  const filteredSubs = q && !catNameMatch
     ? category.subCategories.filter((s) =>
+        s.name.toLowerCase().includes(q) ||
         s.items.some((i) => i.name.toLowerCase().includes(q))
       )
     : category.subCategories;
+  const isExpanded = q ? true : expanded;
 
   const totalItems =
     category.items.length +
@@ -53,7 +56,7 @@ export function CategoryCard({ category, search = "" }: { category: CategoryWith
           <ChevronRight
             width={18}
             height={18}
-            className={`text-zinc-400 transition-transform ${expanded ? "rotate-90" : ""}`}
+            className={`text-zinc-400 transition-transform ${isExpanded ? "rotate-90" : ""}`}
           />
         </button>
 
@@ -118,7 +121,7 @@ export function CategoryCard({ category, search = "" }: { category: CategoryWith
       </div>
 
       {/* Body */}
-      {expanded && (
+      {isExpanded && (
         <div className="border-t border-zinc-100 px-1 py-2 dark:border-zinc-800">
           {/* Direct items */}
           {filteredItems.length > 0 && (

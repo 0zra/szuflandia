@@ -24,7 +24,7 @@ type SubCategory = {
 };
 
 export function SubCategorySection({ sub, search = "" }: { sub: SubCategory; search?: string }) {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState(sub.name);
   const editSub = useEditSubCategory();
@@ -37,6 +37,10 @@ export function SubCategorySection({ sub, search = "" }: { sub: SubCategory; sea
     setEditing(false);
   }
 
+  const q = search.toLowerCase();
+  const subNameMatch = q ? sub.name.toLowerCase().includes(q) : false;
+  const isExpanded = q ? true : expanded;
+
   return (
     <div className="ml-2 border-l border-zinc-200 pl-3 dark:border-zinc-700/50">
       <div className="group flex items-center gap-1 py-1">
@@ -45,7 +49,7 @@ export function SubCategorySection({ sub, search = "" }: { sub: SubCategory; sea
           className="flex h-6 w-6 shrink-0 items-center justify-center rounded transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800"
         >
           <ChevronRight
-            className={`text-zinc-400 transition-transform ${expanded ? "rotate-90" : ""}`}
+            className={`text-zinc-400 transition-transform ${isExpanded ? "rotate-90" : ""}`}
           />
         </button>
 
@@ -109,17 +113,17 @@ export function SubCategorySection({ sub, search = "" }: { sub: SubCategory; sea
         )}
       </div>
 
-      {expanded && (
+      {isExpanded && (
         <div className="space-y-0.5 py-1">
-          {(search
+          {(q && !subNameMatch
             ? sub.items.filter((i) =>
-                i.name.toLowerCase().includes(search.toLowerCase())
+                i.name.toLowerCase().includes(q)
               )
             : sub.items
           ).map((item) => (
             <ItemRow key={item.id} item={item} />
           ))}
-          {!search && <AddItemForm subCategoryId={sub.id} />}
+          {!q && <AddItemForm subCategoryId={sub.id} />}
         </div>
       )}
     </div>

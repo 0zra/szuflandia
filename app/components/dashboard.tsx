@@ -105,13 +105,17 @@ export function Dashboard() {
               .filter((cat) => {
                 if (!search) return true;
                 const q = search.toLowerCase();
+                const catNameMatch = cat.name.toLowerCase().includes(q);
                 const hasDirectItem = cat.items.some((i) =>
                   i.name.toLowerCase().includes(q)
+                );
+                const hasSubNameMatch = cat.subCategories.some((s) =>
+                  s.name.toLowerCase().includes(q)
                 );
                 const hasSubItem = cat.subCategories.some((s) =>
                   s.items.some((i) => i.name.toLowerCase().includes(q))
                 );
-                return hasDirectItem || hasSubItem;
+                return catNameMatch || hasDirectItem || hasSubNameMatch || hasSubItem;
               })
               .map((cat) => (
                 <CategoryCard key={cat.id} category={cat} search={search} />
