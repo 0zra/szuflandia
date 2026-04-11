@@ -7,9 +7,11 @@ import { useAddItem } from "@/app/hooks/use-pantry";
 export function AddItemForm({
   categoryId,
   subCategoryId,
+  onCreated,
 }: {
   categoryId?: string;
   subCategoryId?: string;
+  onCreated?: (id: string) => void;
 }) {
   const addItem = useAddItem();
   const [open, setOpen] = useState(false);
@@ -20,13 +22,16 @@ export function AddItemForm({
   function submit() {
     const trimmedName = name.trim();
     if (!trimmedName) return;
-    addItem.mutate({
-      name: trimmedName,
-      quantity: parseFloat(quantity) || 1,
-      unit: unit.trim() || "szt.",
-      categoryId: subCategoryId ? undefined : categoryId,
-      subCategoryId,
-    });
+    addItem.mutate(
+      {
+        name: trimmedName,
+        quantity: parseFloat(quantity) || 1,
+        unit: unit.trim() || "szt.",
+        categoryId: subCategoryId ? undefined : categoryId,
+        subCategoryId,
+      },
+      { onSuccess: (created) => onCreated?.(created.id) }
+    );
     setName("");
     setQuantity("1");
     setUnit("szt.");

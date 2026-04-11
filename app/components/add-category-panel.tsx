@@ -7,9 +7,11 @@ import { useAddCategory } from "@/app/hooks/use-pantry";
 export function AddCategoryPanel({
   open,
   onClose,
+  onCreated,
 }: {
   open: boolean;
   onClose: () => void;
+  onCreated?: (id: string) => void;
 }) {
   const addCategory = useAddCategory();
   const [name, setName] = useState("");
@@ -33,9 +35,10 @@ export function AddCategoryPanel({
       return;
     }
     addCategory.mutate(trimmed, {
-      onSuccess: () => {
+      onSuccess: (created) => {
         reset();
         onClose();
+        onCreated?.(created.id);
       },
       onError: () => setError("Nie udało się utworzyć kategorii. Nazwa może już istnieć."),
     });

@@ -16,11 +16,13 @@ export function AddItemPanel({
   onClose,
   preselectedCategoryId,
   preselectedSubCategoryId,
+  onCreated,
 }: {
   open: boolean;
   onClose: () => void;
   preselectedCategoryId?: string;
   preselectedSubCategoryId?: string;
+  onCreated?: (id: string) => void;
 }) {
   const { data: categories } = useCategories();
   const addItem = useAddItem();
@@ -100,9 +102,10 @@ export function AddItemPanel({
         subCategoryId: isSub ? id : undefined,
       },
       {
-        onSuccess: () => {
+        onSuccess: (created) => {
           reset();
           onClose();
+          onCreated?.(created.id);
         },
         onError: () => setError("Nie udało się dodać produktu."),
       }

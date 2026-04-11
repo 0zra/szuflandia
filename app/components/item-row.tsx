@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useEditItem, useDeleteItem } from "@/app/hooks/use-pantry";
 import { Minus, Plus, Pencil, Trash, Check, X } from "@/app/components/icons";
+import { ConfirmModal } from "@/app/components/confirm-modal";
 
 type Item = {
   id: string;
@@ -19,6 +20,7 @@ export function ItemRow({ item }: { item: Item }) {
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState(item.name);
   const [editUnit, setEditUnit] = useState(item.unit);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   const step = item.unit === "szt." || item.unit === "pieces" ? 1 : 0.5;
 
@@ -78,17 +80,28 @@ export function ItemRow({ item }: { item: Item }) {
           <X />
         </button>
         <button
-          onClick={() => removeItem.mutate(item.id)}
+          onClick={() => setConfirmDelete(true)}
           className="rounded p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-950"
         >
           <Trash />
         </button>
+
+        <ConfirmModal
+          open={confirmDelete}
+          title="Usuń produkt"
+          message={`Czy na pewno chcesz usunąć „${item.name}"?`}
+          onConfirm={() => {
+            removeItem.mutate(item.id);
+            setConfirmDelete(false);
+          }}
+          onCancel={() => setConfirmDelete(false)}
+        />
       </div>
     );
   }
 
   return (
-    <div className="group flex items-center gap-1 rounded-lg px-3 py-1.5 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+    <div data-item-id={item.id} className="group flex items-center gap-1 rounded-lg px-3 py-1.5 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
       <span className="min-w-0 flex-1 truncate text-sm text-zinc-800 dark:text-zinc-200">
         {item.name}
       </span>

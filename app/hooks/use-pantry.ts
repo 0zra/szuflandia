@@ -161,7 +161,28 @@ export function useAddItem() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (input: AddItemInput) => addItem(input),
-    onSuccess: () => {
+    onSuccess: (created) => {
+      qc.setQueryData<CategoryWithChildren[]>(CATEGORIES_KEY, (old) => {
+        if (!old) return old;
+        return old.map((c) => {
+          if (created.subCategoryId) {
+            return {
+              ...c,
+              subCategories: c.subCategories.map((s) =>
+                s.id === created.subCategoryId
+                  ? { ...s, items: [...s.items, created] }
+                  : s
+              ),
+            };
+          }
+          if (created.categoryId === c.id) {
+            return { ...c, items: [...c.items, created] };
+          }
+          return c;
+        });
+      });
+    },
+    onSettled: () => {
       qc.invalidateQueries({ queryKey: CATEGORIES_KEY });
     },
   });

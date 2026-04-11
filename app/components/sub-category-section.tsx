@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronRight, Pencil, Trash, Check, X } from "@/app/components/icons";
 import { ItemRow } from "@/app/components/item-row";
 import { AddItemForm } from "@/app/components/add-item-form";
@@ -8,6 +8,7 @@ import {
   useEditSubCategory,
   useDeleteSubCategory,
 } from "@/app/hooks/use-pantry";
+import { ConfirmModal } from "@/app/components/confirm-modal";
 
 type SubCategory = {
   id: string;
@@ -23,10 +24,21 @@ type SubCategory = {
   }[];
 };
 
-export function SubCategorySection({ sub, search = "" }: { sub: SubCategory; search?: string }) {
+export function SubCategorySection({
+  sub,
+  search = "",
+  scrollTarget,
+  onCreated,
+}: {
+  sub: SubCategory;
+  search?: string;
+  scrollTarget?: string | null;
+  onCreated?: (id: string) => void;
+}) {
   const [expanded, setExpanded] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState(sub.name);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const editSub = useEditSubCategory();
   const deleteSub = useDeleteSubCategory();
 
@@ -37,12 +49,22 @@ export function SubCategorySection({ sub, search = "" }: { sub: SubCategory; sea
     setEditing(false);
   }
 
+  // Auto-expand when scrollTarget is this subcategory or one of its items
+  useEffect(() => {
+    if (!scrollTarget) return;
+    const isMe = scrollTarget === sub.id;
+    const hasItem = sub.items.some((i) => i.id === scrollTarget);
+    if (isMe || hasItem) {
+      setExpanded(true);
+    }
+  }, [scrollTarget, sub]);
+
   const q = search.toLowerCase();
   const subNameMatch = q ? sub.name.toLowerCase().includes(q) : false;
   const isExpanded = q ? true : expanded;
 
   return (
-    <div className="ml-2 border-l border-zinc-200 pl-3 dark:border-zinc-700/50">
+    <div data-subcategory-id={sub.id} className="ml-2 border-l border-zinc-200 pl-3 dark:border-zinc-700/50">
       <div className="group flex items-center gap-1 py-1">
         <button
           onClick={() => setExpanded(!expanded)}
@@ -104,7 +126,7 @@ export function SubCategorySection({ sub, search = "" }: { sub: SubCategory; sea
               <Pencil />
             </button>
             <button
-              onClick={() => deleteSub.mutate(sub.id)}
+              onClick={() => setConfirmDelete(true)}
               className="rounded p-1 text-zinc-400 opacity-0 transition-opacity group-hover:opacity-100 hover:text-red-500"
             >
               <Trash />
@@ -123,9 +145,19 @@ export function SubCategorySection({ sub, search = "" }: { sub: SubCategory; sea
           ).map((item) => (
             <ItemRow key={item.id} item={item} />
           ))}
-          {!q && <AddItemForm subCategoryId={sub.id} />}
+          {!q && <AddItemForm subCategoryId={sub.id} onCreated={onCreated} />}
         </div>
       )}
+      <ConfirmModal
+        open={confirmDelete}
+        title="Usuń podkategorię"
+        message={`Czy na pewno chcesz usunąć podkategorię „${sub.name}"? Wszystkie produkty w tej podkategorii zostaną również usunięte.`}
+        onConfirm={() => {
+          deleteSub.mutate(sub.id);
+          setConfirmDelete(false);
+        }}
+        onCancel={() => setConfirmDelete(false)}
+      />
     </div>
   );
 }

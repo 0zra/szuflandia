@@ -8,10 +8,12 @@ export function AddSubCategoryPanel({
   open,
   onClose,
   preselectedCategoryId,
+  onCreated,
 }: {
   open: boolean;
   onClose: () => void;
   preselectedCategoryId?: string;
+  onCreated?: (id: string) => void;
 }) {
   const { data: categories } = useCategories();
   const addSub = useAddSubCategory();
@@ -50,9 +52,10 @@ export function AddSubCategoryPanel({
     addSub.mutate(
       { categoryId: catId, name: trimmed },
       {
-        onSuccess: () => {
+        onSuccess: (created) => {
           reset();
           onClose();
+          onCreated?.(created.id);
         },
         onError: () =>
           setError("Nie udało się utworzyć podkategorii. Nazwa może już istnieć w tej kategorii."),

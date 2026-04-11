@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { type CategoryWithChildren } from "@/app/actions/categories";
 import {
   useEditCategory,
@@ -12,10 +12,22 @@ import { ItemRow } from "@/app/components/item-row";
 import { AddItemForm } from "@/app/components/add-item-form";
 import { AddInline } from "@/app/components/add-inline";
 import { SubCategorySection } from "@/app/components/sub-category-section";
+import { ConfirmModal } from "@/app/components/confirm-modal";
 
-export function CategoryCard({ category, search = "" }: { category: CategoryWithChildren; search?: string }) {
+export function CategoryCard({
+  category,
+  search = "",
+  scrollTarget,
+  onCreated,
+}: {
+  category: CategoryWithChildren;
+  search?: string;
+  scrollTarget?: string | null;
+  onCreated?: (id: string) => void;
+}) {
   const [expanded, setExpanded] = useState(false);
   const [editing, setEditing] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [editName, setEditName] = useState(category.name);
   const editCat = useEditCategory();
   const deleteCat = useDeleteCategory();
@@ -38,6 +50,20 @@ export function CategoryCard({ category, search = "" }: { category: CategoryWith
     category.items.length +
     category.subCategories.reduce((n, s) => n + s.items.length, 0);
 
+  // Auto-expand when scrollTarget is this category or one of its children
+  useEffect(() => {
+    if (!scrollTarget) return;
+    const isMe = scrollTarget === category.id;
+    const hasItem = category.items.some((i) => i.id === scrollTarget);
+    const hasSub = category.subCategories.some((s) => s.id === scrollTarget);
+    const hasSubItem = category.subCategories.some((s) =>
+      s.items.some((i) => i.id === scrollTarget)
+    );
+    if (isMe || hasItem || hasSub || hasSubItem) {
+      setExpanded(true);
+    }
+  }, [scrollTarget, category]);
+
   function saveEdit() {
     const trimmed = editName.trim();
     if (!trimmed) return;
@@ -46,7 +72,7 @@ export function CategoryCard({ category, search = "" }: { category: CategoryWith
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+    <div data-category-id={category.id} className="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
       {/* Header */}
       <div className="group flex items-center gap-2 px-4 py-3">
         <button
@@ -111,7 +137,7 @@ export function CategoryCard({ category, search = "" }: { category: CategoryWith
               <Pencil />
             </button>
             <button
-              onClick={() => deleteCat.mutate(category.id)}
+              onClick={() => setConfirmDelete(true)}
               className="rounded p-1 text-zinc-400 opacity-0 transition-opacity group-hover:opacity-100 hover:text-red-500"
             >
               <Trash />
@@ -132,13 +158,13 @@ export function CategoryCard({ category, search = "" }: { category: CategoryWith
             </div>
           )}
 
-          {!q && <AddItemForm categoryId={category.id} />}
+          {!q && <AddItemForm categoryId={category.id} onCreated={onCreated} />}
 
           {/* Subcategories */}
           {filteredSubs.length > 0 && (
             <div className="mt-2 space-y-1">
               {filteredSubs.map((sub) => (
-                <SubCategorySection key={sub.id} sub={sub} search={search} />
+                <SubCategorySection key={sub.id} sub={sub} search={search} scrollTarget={scrollTarget} onCreated={onCreated} />
               ))}
             </div>
           )}
@@ -148,13 +174,27 @@ export function CategoryCard({ category, search = "" }: { category: CategoryWith
               <AddInline
                 placeholder="Dodaj podkategorię"
                 onAdd={(name) =>
-                  addSub.mutate({ categoryId: category.id, name })
+                  addSub.mutate(
+                    { categoryId: category.id, name },
+                    { onSuccess: (created) => onCreated?.(created.id) }
+                  )
                 }
               />
             </div>
           )}
         </div>
       )}
+
+      <ConfirmModal
+        open={confirmDelete}
+        title="Usuń kategorię"
+        message={`Czy na pewno chcesz usunąć kategorię „${category.name}"? Wszystkie podkategorie i produkty w tej kategorii zostaną również usunięte.`}
+        onConfirm={() => {
+          deleteCat.mutate(category.id);
+          setConfirmDelete(false);
+        }}
+        onCancel={() => setConfirmDelete(false)}
+      />
     </div>
   );
 }

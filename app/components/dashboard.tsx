@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useCategories, useAddCategory } from "@/app/hooks/use-pantry";
 import { logout } from "@/app/actions/auth";
 import { CategoryCard } from "@/app/components/category-card";
@@ -18,6 +18,26 @@ export function Dashboard() {
   const [activePanel, setActivePanel] = useState<PanelKind>(null);
   const [fabOpen, setFabOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [scrollTarget, setScrollTarget] = useState<string | null>(null);
+
+  const scrollToTarget = useCallback((id: string) => {
+    setScrollTarget(id);
+    const selector = `[data-category-id="${id}"], [data-subcategory-id="${id}"], [data-item-id="${id}"]`;
+    let attempts = 0;
+    function tryScroll() {
+      const el = document.querySelector(selector);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        setScrollTarget(null);
+      } else if (attempts < 15) {
+        attempts++;
+        requestAnimationFrame(tryScroll);
+      } else {
+        setScrollTarget(null);
+      }
+    }
+    requestAnimationFrame(tryScroll);
+  }, []);
 
   function openPanel(kind: PanelKind) {
     setFabOpen(false);
@@ -118,13 +138,17 @@ export function Dashboard() {
                 return catNameMatch || hasDirectItem || hasSubNameMatch || hasSubItem;
               })
               .map((cat) => (
-                <CategoryCard key={cat.id} category={cat} search={search} />
+                <CategoryCard key={cat.id} category={cat} search={search} scrollTarget={scrollTarget} onCreated={scrollToTarget} />
               ))}
 
             <div className="overflow-hidden rounded-xl border border-dashed border-zinc-300 bg-white dark:border-zinc-700 dark:bg-zinc-900">
               <AddInline
                 placeholder="Dodaj kategorię"
-                onAdd={(name) => addCategory.mutate(name)}
+                onAdd={(name) =>
+                  addCategory.mutate(name, {
+                    onSuccess: (created) => scrollToTarget(created.id),
+                  })
+                }
               />
             </div>
 
@@ -190,14 +214,17 @@ export function Dashboard() {
       <AddCategoryPanel
         open={activePanel === "category"}
         onClose={() => setActivePanel(null)}
+        onCreated={scrollToTarget}
       />
       <AddSubCategoryPanel
         open={activePanel === "subcategory"}
         onClose={() => setActivePanel(null)}
+        onCreated={scrollToTarget}
       />
       <AddItemPanel
         open={activePanel === "item"}
         onClose={() => setActivePanel(null)}
+        onCreated={scrollToTarget}
       />
     </div>
   );
