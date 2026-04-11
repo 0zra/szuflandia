@@ -17,7 +17,7 @@ export function AddItemForm({
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("1");
-  const [unit, setUnit] = useState("szt.");
+  const [unit, setUnit] = useState("");
 
   function submit() {
     const trimmedName = name.trim();
@@ -26,7 +26,7 @@ export function AddItemForm({
       {
         name: trimmedName,
         quantity: parseFloat(quantity) || 1,
-        unit: unit.trim() || "szt.",
+        unit: unit.trim(),
         categoryId: subCategoryId ? undefined : categoryId,
         subCategoryId,
       },
@@ -34,7 +34,7 @@ export function AddItemForm({
     );
     setName("");
     setQuantity("1");
-    setUnit("szt.");
+    setUnit("");
     setOpen(false);
   }
 
@@ -83,8 +83,8 @@ export function AddItemForm({
         <input
           value={unit}
           onChange={(e) => setUnit(e.target.value)}
-          placeholder="Jedn."
-          className="w-20 rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm outline-none focus:border-zinc-500 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:border-zinc-400"
+          placeholder="Lokacija"
+          className="w-24 rounded border border-zinc-300 bg-white px-2 py-1.5 text-sm outline-none focus:border-zinc-500 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:border-zinc-400"
         />
         <button
           type="submit"

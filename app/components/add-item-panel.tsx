@@ -29,7 +29,7 @@ export function AddItemPanel({
 
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState(1);
-  const [unit, setUnit] = useState("szt.");
+  const [unit, setUnit] = useState("");
   const [locationKey, setLocationKey] = useState("");
   const [error, setError] = useState("");
 
@@ -58,12 +58,10 @@ export function AddItemPanel({
         ? `cat:${preselectedCategoryId}`
         : "");
 
-  const commonUnits = ["szt.", "kg", "g", "L", "mL", "oz", "lbs", "szkl."];
-
   function reset() {
     setName("");
     setQuantity(1);
-    setUnit("szt.");
+    setUnit("");
     setLocationKey("");
     setError("");
   }
@@ -97,7 +95,7 @@ export function AddItemPanel({
       {
         name: trimmedName,
         quantity,
-        unit: unit.trim() || "szt.",
+        unit: unit.trim(),
         categoryId: isSub ? undefined : id,
         subCategoryId: isSub ? id : undefined,
       },
@@ -167,36 +165,20 @@ export function AddItemPanel({
           </div>
         </div>
 
-        {/* Unit */}
+        {/* Location descriptor */}
         <div className="space-y-1.5">
           <label
             htmlFor="item-unit"
             className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
           >
-            Jednostka
+            Lokacija
           </label>
-          <div className="flex flex-wrap gap-1.5">
-            {commonUnits.map((u) => (
-              <button
-                key={u}
-                type="button"
-                onClick={() => setUnit(u)}
-                className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
-                  unit === u
-                    ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
-                    : "border-zinc-300 text-zinc-600 hover:border-zinc-400 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-600"
-                }`}
-              >
-                {u}
-              </button>
-            ))}
-          </div>
           <input
             id="item-unit"
             value={unit}
             onChange={(e) => setUnit(e.target.value)}
-            placeholder="Lub wpisz własną jednostkę"
-            className="mt-1.5 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition-colors focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
+            placeholder='np. "górna półka", "szuflada"'
+            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm outline-none transition-colors focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
           />
         </div>
 

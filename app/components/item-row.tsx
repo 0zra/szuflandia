@@ -22,7 +22,7 @@ export function ItemRow({ item }: { item: Item }) {
   const [editUnit, setEditUnit] = useState(item.unit);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const step = item.unit === "szt." || item.unit === "pieces" ? 1 : 0.5;
+  const step = 1;
 
   function adjustQuantity(delta: number) {
     const next = Math.max(0, Math.round((item.quantity + delta) * 10) / 10);
@@ -31,9 +31,8 @@ export function ItemRow({ item }: { item: Item }) {
 
   function saveEdit() {
     const trimmedName = editName.trim();
-    const trimmedUnit = editUnit.trim();
-    if (!trimmedName || !trimmedUnit) return;
-    editItem.mutate({ id: item.id, name: trimmedName, unit: trimmedUnit });
+    if (!trimmedName) return;
+    editItem.mutate({ id: item.id, name: trimmedName, unit: editUnit.trim() });
     setEditing(false);
   }
 
@@ -61,7 +60,7 @@ export function ItemRow({ item }: { item: Item }) {
           value={editUnit}
           onChange={(e) => setEditUnit(e.target.value)}
           className="w-20 rounded border border-zinc-300 bg-white px-2 py-1 text-sm outline-none focus:border-zinc-500 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:border-zinc-400"
-          placeholder="Jedn."
+          placeholder="Lokacija"
           onKeyDown={(e) => {
             if (e.key === "Enter") saveEdit();
             if (e.key === "Escape") cancelEdit();
@@ -129,9 +128,11 @@ export function ItemRow({ item }: { item: Item }) {
         </button>
       </div>
 
-      <span className="w-14 text-xs text-zinc-400 dark:text-zinc-500">
-        {item.unit}
-      </span>
+      {item.unit && (
+        <span className="w-14 text-xs text-zinc-400 dark:text-zinc-500">
+          {item.unit}
+        </span>
+      )}
 
       <button
         onClick={() => setEditing(true)}
