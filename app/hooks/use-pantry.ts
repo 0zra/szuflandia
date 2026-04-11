@@ -14,6 +14,7 @@ import {
   deleteSubCategory,
 } from "@/app/actions/subcategories";
 import { addItem, editItem, deleteItem } from "@/app/actions/items";
+import { addToast } from "@/app/lib/toast-store";
 
 const CATEGORIES_KEY = ["categories"] as const;
 
@@ -40,7 +41,9 @@ export function useAddCategory() {
       qc.setQueryData<CategoryWithChildren[]>(CATEGORIES_KEY, (old) =>
         old ? [...old, created] : [created]
       );
+      addToast("Dodano kategorię");
     },
+    onError: () => addToast("Nie udało się dodać kategorii", "error"),
   });
 }
 
@@ -56,6 +59,7 @@ export function useEditCategory() {
           : old
       );
     },
+    onError: () => addToast("Nie udało się zapisać zmian", "error"),
   });
 }
 
@@ -67,7 +71,9 @@ export function useDeleteCategory() {
       qc.setQueryData<CategoryWithChildren[]>(CATEGORIES_KEY, (old) =>
         old ? old.filter((c) => c.id !== id) : old
       );
+      addToast("Usunięto kategorię");
     },
+    onError: () => addToast("Nie udało się usunąć kategorii", "error"),
   });
 }
 
@@ -100,7 +106,9 @@ export function useAddSubCategory() {
             )
           : old
       );
+      addToast("Dodano podkategorię");
     },
+    onError: () => addToast("Nie udało się dodać podkategorii", "error"),
   });
 }
 
@@ -125,6 +133,7 @@ export function useEditSubCategory() {
           : old
       );
     },
+    onError: () => addToast("Nie udało się zapisać zmian", "error"),
   });
 }
 
@@ -141,7 +150,9 @@ export function useDeleteSubCategory() {
             }))
           : old
       );
+      addToast("Usunięto podkategorię");
     },
+    onError: () => addToast("Nie udało się usunąć podkategorii", "error"),
   });
 }
 
@@ -181,7 +192,9 @@ export function useAddItem() {
           return c;
         });
       });
+      addToast("Dodano produkt");
     },
+    onError: () => addToast("Nie udało się dodać produktu", "error"),
     onSettled: () => {
       qc.invalidateQueries({ queryKey: CATEGORIES_KEY });
     },
@@ -237,6 +250,7 @@ export function useEditItem() {
       if (context?.previous) {
         qc.setQueryData(CATEGORIES_KEY, context.previous);
       }
+      addToast("Nie udało się zapisać zmian", "error");
     },
     onSettled: () => {
       qc.invalidateQueries({ queryKey: CATEGORIES_KEY });
@@ -261,6 +275,8 @@ export function useDeleteItem() {
             }))
           : old
       );
+      addToast("Usunięto produkt");
     },
+    onError: () => addToast("Nie udało się usunąć produktu", "error"),
   });
 }

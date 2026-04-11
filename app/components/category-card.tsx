@@ -187,11 +187,13 @@ export function CategoryCard({
 
       <ConfirmModal
         open={confirmDelete}
+        loading={deleteCat.isPending}
         title="Usuń kategorię"
         message={`Czy na pewno chcesz usunąć kategorię „${category.name}"? Wszystkie podkategorie i produkty w tej kategorii zostaną również usunięte.`}
         onConfirm={() => {
-          deleteCat.mutate(category.id);
-          setConfirmDelete(false);
+          deleteCat.mutate(category.id, {
+            onSettled: () => setConfirmDelete(false),
+          });
         }}
         onCancel={() => setConfirmDelete(false)}
       />

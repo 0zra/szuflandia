@@ -87,11 +87,13 @@ export function ItemRow({ item }: { item: Item }) {
 
         <ConfirmModal
           open={confirmDelete}
+          loading={removeItem.isPending}
           title="Usuń produkt"
           message={`Czy na pewno chcesz usunąć „${item.name}"?`}
           onConfirm={() => {
-            removeItem.mutate(item.id);
-            setConfirmDelete(false);
+            removeItem.mutate(item.id, {
+              onSettled: () => setConfirmDelete(false),
+            });
           }}
           onCancel={() => setConfirmDelete(false)}
         />

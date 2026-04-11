@@ -150,11 +150,13 @@ export function SubCategorySection({
       )}
       <ConfirmModal
         open={confirmDelete}
+        loading={deleteSub.isPending}
         title="Usuń podkategorię"
         message={`Czy na pewno chcesz usunąć podkategorię „${sub.name}"? Wszystkie produkty w tej podkategorii zostaną również usunięte.`}
         onConfirm={() => {
-          deleteSub.mutate(sub.id);
-          setConfirmDelete(false);
+          deleteSub.mutate(sub.id, {
+            onSettled: () => setConfirmDelete(false),
+          });
         }}
         onCancel={() => setConfirmDelete(false)}
       />

@@ -9,6 +9,7 @@ import { LogOut, Plus, X } from "@/app/components/icons";
 import { AddCategoryPanel } from "@/app/components/add-category-panel";
 import { AddSubCategoryPanel } from "@/app/components/add-subcategory-panel";
 import { AddItemPanel } from "@/app/components/add-item-panel";
+import { Toaster } from "@/app/components/toaster";
 
 type PanelKind = "category" | "subcategory" | "item" | null;
 
@@ -232,6 +233,8 @@ export function Dashboard() {
         onClose={() => setActivePanel(null)}
         onCreated={scrollToTarget}
       />
+
+      <Toaster />
     </div>
   );
 }
