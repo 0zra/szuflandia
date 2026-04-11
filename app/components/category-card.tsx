@@ -132,13 +132,13 @@ export function CategoryCard({
             </button>
             <button
               onClick={() => setEditing(true)}
-              className="rounded p-1 text-zinc-400 opacity-0 transition-opacity group-hover:opacity-100 hover:text-zinc-600 dark:hover:text-zinc-300"
+              className="rounded p-1 text-zinc-400 can-hover:opacity-0 can-hover:transition-opacity can-hover:group-hover:opacity-100 hover:text-zinc-600 dark:hover:text-zinc-300"
             >
               <Pencil />
             </button>
             <button
               onClick={() => setConfirmDelete(true)}
-              className="rounded p-1 text-zinc-400 opacity-0 transition-opacity group-hover:opacity-100 hover:text-red-500"
+              className="rounded p-1 text-zinc-400 can-hover:opacity-0 can-hover:transition-opacity can-hover:group-hover:opacity-100 hover:text-red-500"
             >
               <Trash />
             </button>
