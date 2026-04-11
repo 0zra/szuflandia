@@ -25,9 +25,15 @@ export function Dashboard() {
     const selector = `[data-category-id="${id}"], [data-subcategory-id="${id}"], [data-item-id="${id}"]`;
     let attempts = 0;
     function tryScroll() {
-      const el = document.querySelector(selector);
+      const el = document.querySelector<HTMLElement>(selector);
       if (el) {
-        el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.classList.add("highlight-flash");
+        el.addEventListener(
+          "animationend",
+          () => el.classList.remove("highlight-flash"),
+          { once: true }
+        );
         setScrollTarget(null);
       } else if (attempts < 15) {
         attempts++;
