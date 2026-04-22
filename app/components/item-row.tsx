@@ -20,6 +20,8 @@ export function ItemRow({ item }: { item: Item }) {
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState(item.name);
   const [editUnit, setEditUnit] = useState(item.unit);
+  const [editingQty, setEditingQty] = useState(false);
+  const [qtyDraft, setQtyDraft] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const step = 1;
@@ -27,6 +29,23 @@ export function ItemRow({ item }: { item: Item }) {
   function adjustQuantity(delta: number) {
     const next = Math.max(0, Math.round((item.quantity + delta) * 10) / 10);
     editItem.mutate({ id: item.id, quantity: next });
+  }
+
+  function startQtyEdit() {
+    setQtyDraft(String(item.quantity));
+    setEditingQty(true);
+  }
+
+  function commitQtyEdit() {
+    const normalized = qtyDraft.replace(",", ".");
+    const parsed = parseFloat(normalized);
+    if (!Number.isNaN(parsed) && parsed >= 0) {
+      const next = Math.round(parsed * 10) / 10;
+      if (next !== item.quantity) {
+        editItem.mutate({ id: item.id, quantity: next });
+      }
+    }
+    setEditingQty(false);
   }
 
   function saveEdit() {
@@ -116,11 +135,37 @@ export function ItemRow({ item }: { item: Item }) {
           <Minus />
         </button>
 
-        <span className="w-12 text-center text-sm font-medium tabular-nums text-zinc-900 dark:text-zinc-100">
-          {item.quantity % 1 === 0
-            ? item.quantity
-            : item.quantity.toFixed(1)}
-        </span>
+        {editingQty ? (
+          <input
+            type="text"
+            inputMode="decimal"
+            value={qtyDraft}
+            onChange={(e) => setQtyDraft(e.target.value)}
+            onBlur={commitQtyEdit}
+            onFocus={(e) => e.currentTarget.select()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                (e.currentTarget as HTMLInputElement).blur();
+              }
+              if (e.key === "Escape") {
+                setEditingQty(false);
+              }
+            }}
+            autoFocus
+            className="h-7 w-12 rounded-md border border-zinc-300 bg-white text-center text-sm font-medium tabular-nums outline-none focus:border-zinc-500 focus:ring-1 focus:ring-zinc-500 dark:border-zinc-600 dark:bg-zinc-800 dark:focus:border-zinc-400 dark:focus:ring-zinc-400"
+          />
+        ) : (
+          <button
+            type="button"
+            onClick={startQtyEdit}
+            className="h-7 w-12 rounded-md text-center text-sm font-medium tabular-nums text-zinc-900 transition-colors hover:bg-zinc-200 dark:text-zinc-100 dark:hover:bg-zinc-700"
+          >
+            {item.quantity % 1 === 0
+              ? item.quantity
+              : item.quantity.toFixed(1)}
+          </button>
+        )}
 
         <button
           onClick={() => adjustQuantity(step)}
